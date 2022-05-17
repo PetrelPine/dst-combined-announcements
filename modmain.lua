@@ -2,26 +2,31 @@
 -- Mod Reference: [https://steamcommunity.com/sharedfiles/filedetails/?id=1894295075]
 -- Mod Reference: [https://steamcommunity.com/sharedfiles/filedetails/?id=1887331613]
 -- Mod Reference: [https://steamcommunity.com/sharedfiles/filedetails/?id=2337978350]
+--[[
+-- Mod Name: Combined Announcements
+-- Author: PetrelPine
+-- Github Link: https://github.com/PetrelPine/dst-combined-announcements
+-- Steam Link: https://steamcommunity.com/sharedfiles/filedetails/?id=2691240099
+]]
 
-HOUNDANNOUNCER = GetModConfigData("HOUNDANNOUNCER")
-WORMANNOUNCER = GetModConfigData("WORMANNOUNCER")
+-- load configuration from modinfo.lua
+hound_anc_flag = GetModConfigData("hound_announcer")
+worm_anc_flag = GetModConfigData("worm_announcer")
 
-FABRICATIONANNOUNCER = GetModConfigData("FABRICATIONANNOUNCER")
-ATTACKANNOUNCER = GetModConfigData("ATTACKANNOUNCER")
-COOLDOWNTIME = GetModConfigData("COOLDOWNTIME")
+fab_anc_flag = GetModConfigData("fabrication_announcer")
+attack_anc_flag = GetModConfigData("attack_announcer")
+cooldown_time = GetModConfigData("cooldown_time")
 
-HAMMERINGANNOUNCER = GetModConfigData("HAMMERINGANNOUNCER")
-LIGHTINGANNOUNCER = GetModConfigData("LIGHTINGANNOUNCER")
+hammer_anc_flag = GetModConfigData("hammering_announcer")
+light_anc_flag = GetModConfigData("lighting_announcer")
 
-APPEARANNOUNCER = GetModConfigData("APPEARANNOUNCER")
-DISAPPEARANNOUNCER = GetModConfigData("DISAPPEARANNOUNCER")
-DEATHANNOUNCER = GetModConfigData("DEATHANNOUNCER")
+appear_anc_flag = GetModConfigData("appear_announcer")
+disappear_anc_flag = GetModConfigData("disappear_announcer")
+death_anc_flag = GetModConfigData("death_announcer")
+-- load configuration from modinfo.lua end
 
 
--- 两条信息之间的等待时间(是否还在冷却)
-cooldown_status = false
-
--- 进行建造检查的建筑
+-- buildings need to perform fabrication check
 local PREFABS_CHECK = {
     arrowsign_post = true,
     beebox = true,
@@ -124,11 +129,12 @@ local PREFABS_CHECK = {
     turfcraftingstation = true
 }
 
+-- waiting time between two messages (whether it is in cooldown status)
+cooldown_status = false
 
 function cooldown_end() cooldown_status = false end
 
--- ANNOUNCE AND VALIDATE FABRICATION
--- 建造公告
+-- validate and announce fabrication
 local function OnBuild_becomevalid(inst, prod)
 
     if PREFABS_CHECK[prod.prefab] then
@@ -137,14 +143,14 @@ local function OnBuild_becomevalid(inst, prod)
 
         if cooldown_status == false then
 
-            if FABRICATIONANNOUNCER then
+            if fab_anc_flag then
                 GLOBAL.TheNet:Announce("A " .. prod:GetDisplayName() .. " has been made by " .. inst:GetDisplayName())
             end
 
             print("A " .. prod:GetDisplayName() .. " has been made by " .. inst:GetDisplayName())
 
             if GLOBAL.TheNet:GetIsServer() then
-                GLOBAL.TheWorld:DoPeriodicTask(COOLDOWNTIME, cooldown_end)
+                GLOBAL.TheWorld:DoPeriodicTask(cooldown_time, cooldown_end)
             end
 
         end
@@ -172,23 +178,22 @@ AddPlayerPostInit(function(inst)
     end
 
 end)
--- ANNOUNCE AND VALIDATE FABRICATION END
+-- validate and announce fabrication end
 
 
--- HAMMERING ANNOUNCEMENT
--- 敲除公告
+-- hammering announcement
 local _ACTION_HAMMER = GLOBAL.ACTIONS.HAMMER.fn
 
 GLOBAL.ACTIONS.HAMMER.fn = function(act)
 
     if act.doer and act.target and act.target.components.workable.workleft == 1 then
 
-        if HAMMERINGANNOUNCER then
-            GLOBAL.TheNet:Announce("Warning: " .. act.doer.name .. " has hammered the " .. act.target.name)
+        if hammer_anc_flag then
+            GLOBAL.TheNet:Announce(act.doer.name .. " has hammered the " .. act.target.name)
         end
 
         if act.doer.userid then
-            print(act.doer.name .. "(" .. act.doer.userid .. ")" .. " has hammered the " .. act.target.name)
+            print(act.doer.name .. " (" .. act.doer.userid .. ")" .. " has hammered the " .. act.target.name)
         end
 
     end
@@ -196,23 +201,22 @@ GLOBAL.ACTIONS.HAMMER.fn = function(act)
     return _ACTION_HAMMER(act)
 
 end
--- HAMMERING ANNOUNCEMENT END
+-- hammering announcement end
 
 
--- LIGHTING ANNOUNCEMENT
--- 点燃公告
+-- lighting announcement
 local _ACTION_LIGHT = GLOBAL.ACTIONS.LIGHT.fn
 
 GLOBAL.ACTIONS.LIGHT.fn = function(act)
 
     if act.doer and act.target then
 
-        if LIGHTINGANNOUNCER then
-            GLOBAL.TheNet:Announce("Warning: " .. act.doer.name .. " has lit the " .. act.target.name)
+        if light_anc_flag then
+            GLOBAL.TheNet:Announce(act.doer.name .. " has lit the " .. act.target.name)
         end
 
         if act.doer.userid then
-            print(act.doer.name .. "(" .. act.doer.userid .. ")" .. " has lit the " .. act.target.name)
+            print(act.doer.name .. " (" .. act.doer.userid .. ")" .. " has lit the " .. act.target.name)
         end
 
     end
@@ -220,11 +224,10 @@ GLOBAL.ACTIONS.LIGHT.fn = function(act)
     return _ACTION_LIGHT(act)
 
 end
--- LIGHTING ANNOUNCEMENT END
+-- lighting announcement end
 
 
--- FOLLOWER UNDER ATTACK ANNOUNCEMENT
--- 随从被攻击提示
+-- important under attack announcement
 FOLLOWERNAMES = {
 
     "chester",  -- 切斯特
@@ -245,14 +248,14 @@ function followers(inst)
 
         if cooldown_status == false then
 
-            if ATTACKANNOUNCER then
+            if attack_anc_flag then
                 GLOBAL.TheNet:Announce(inst:GetDisplayName() .. " is attacked by " .. data.attacker:GetDisplayName())
             end
 
             print(inst:GetDisplayName() .. " is attacked by " .. data.attacker:GetDisplayName())
 
             if GLOBAL.TheNet:GetIsServer() then
-                GLOBAL.TheWorld:DoPeriodicTask(COOLDOWNTIME, cooldown_end)
+                GLOBAL.TheWorld:DoPeriodicTask(cooldown_time, cooldown_end)
             end
 
         end
@@ -266,11 +269,10 @@ function followers(inst)
 end
 
 for k, v in pairs(FOLLOWERNAMES) do AddPrefabPostInit(v, followers) end
--- FOLLOWER UNDER ATTACK ANNOUNCEMENT END
+-- important under attack announcement end
 
 
--- MOB ANNOUNCEMENT
--- 怪物提示
+-- mob announcement
 MOBNAMES_TOTAL = {  -- 所有提示的怪物
 
     -- 四季boss
@@ -300,8 +302,8 @@ MOBNAMES_TOTAL = {  -- 所有提示的怪物
     "spiderqueen",  -- 蜘蛛女王
 
     -- 树人
-    "leif",  -- 树人守卫(Normal)
-    "leif_sparse",  -- 树人守卫(lumpy)
+    "leif",  -- 树人守卫(常青树)
+    "leif_sparse",  -- 树人守卫(桦树)
 
     -- 齿轮机器
     "knight",  -- 发条骑士
@@ -315,11 +317,11 @@ MOBNAMES_TOTAL = {  -- 所有提示的怪物
     "shadow_rook",  -- 暗影发条战车
 
     -- 影怪
-    "crawlinghorror",  -- 影怪(Standard version)
-    "crawlingnightmare",  -- 影怪(Ruins version)
-    "terrorbeak",  -- 尖嘴影怪(Standard version)
-    "nightmarebeak",  -- 尖嘴影怪(Ruins version)
-    "oceanhorror",  -- 影怪(海上)
+    "crawlinghorror",  -- 爬行影怪(标准)
+    "crawlingnightmare",  -- 爬行影怪(暴动阶段生成)
+    "terrorbeak",  -- 尖嘴影怪(标准)
+    "nightmarebeak",  -- 尖嘴影怪(暴动阶段生成)
+    "oceanhorror",  -- 利爪影怪(海上)
 
     -- 主动攻击生物
     "walrus",  -- 海象
@@ -379,8 +381,8 @@ MOBNAMES_APPEAR = {  -- 出现提示的怪物
     "lordfruitfly",  -- 果蝇王
     "mermking",  -- 鱼人王
     "mermguard",  -- 鱼人守卫
-    "leif",  -- 树人守卫(Normal)
-    "leif_sparse",  -- 树人守卫(lumpy)
+    "leif",  -- 树人守卫(常青树)
+    "leif_sparse",  -- 树人守卫(桦树)
     "shadow_knight",  -- 暗影发条骑士
     "shadow_bishop",  -- 暗影发条主教
     "shadow_rook",  -- 暗影发条战车
@@ -456,8 +458,8 @@ MOBNAMES_DEATH = {  -- 死亡提示的怪物
 
     "lordfruitfly",  -- 果蝇王
     "mermking",  -- 鱼人王
-    "leif",  -- 树人守卫(Normal)
-    "leif_sparse",  -- 树人守卫(lumpy)
+    "leif",  -- 树人守卫(常青树)
+    "leif_sparse",  -- 树人守卫(桦树)
 
     "shadow_knight",  -- 暗影发条骑士
     "shadow_bishop",  -- 暗影发条主教
@@ -497,11 +499,11 @@ MOBNAMES_DEATH = {  -- 死亡提示的怪物
     "tentacle_pillar",  -- 大触手
     "worm",  -- 洞穴蠕虫
 
-    "crawlinghorror",  -- 影怪(Standard version)
-    "crawlingnightmare",  -- 影怪(Ruins version)
-    "terrorbeak",  -- 尖嘴影怪(Standard version)
-    "nightmarebeak",  -- 尖嘴影怪(Ruins version)
-    "oceanhorror",  -- 影怪(海上)
+    "crawlinghorror",  -- 爬行影怪(标准)
+    "crawlingnightmare",  -- 爬行影怪(暴动阶段生成)
+    "terrorbeak",  -- 尖嘴影怪(标准)
+    "nightmarebeak",  -- 尖嘴影怪(暴动阶段生成)
+    "oceanhorror",  -- 利爪影怪(海上)
 
     "chester",  -- 切斯特
     "hutch",  -- 哈奇
@@ -562,15 +564,15 @@ for k, v in pairs(MOBNAMES_TOTAL) do
 
     AddPrefabPostInit(v, function(inst, data)
 
-        if APPEARANNOUNCER and table.contains(MOBNAMES_APPEAR, v) then
+        if appear_anc_flag and table.contains(MOBNAMES_APPEAR, v) then
             inst:DoTaskInTime(0.5, mob_appear)  -- mob出现时执行
         end
 
-        if DISAPPEARANNOUNCER and table.contains(MOBNAMES_DISAPPEAR, v) then
+        if disappear_anc_flag and table.contains(MOBNAMES_DISAPPEAR, v) then
             inst:ListenForEvent("onremove", mob_disappear)  -- mob消失时触发
         end
         
-        if DEATHANNOUNCER and table.contains(MOBNAMES_DEATH, v) then
+        if death_anc_flag and table.contains(MOBNAMES_DEATH, v) then
             inst:ListenForEvent("attacked", mob_attacked)  -- mob被攻击时触发
             inst:ListenForEvent("death", mob_killed)  -- mob死亡时触发
         end
@@ -578,10 +580,10 @@ for k, v in pairs(MOBNAMES_TOTAL) do
     end)
 
 end
--- MOB ANNOUNCEMENT END
+-- mob announcement end
 
 
--- VALIDATE FABRICATION
+-- validate fabrication
 local function HookThis(prefab)
     AddPrefabPostInit(prefab, function(inst)
         if not GLOBAL.TheWorld.ismastersim then return end
@@ -590,17 +592,16 @@ local function HookThis(prefab)
 end
 
 for prefab, _ in pairs(PREFABS_CHECK) do HookThis(prefab) end
--- VALIDATE FABRICATION END
+-- validate fabrication end
 
 
--- 猎狗&洞穴蠕虫攻击提示
+-- hound / worm attack announcement
 local DAYS_IN_ADVANCE = 5
 local secADay = 8 * 60
 
 local function second2Day(val) return math.floor(val / secADay) end
 
--- HOUND ATTACK ANNOUNCEMENT
--- 猎狗攻击提示
+-- hound attack announcement
 local function HoundAttackString(timeToAttack)
 
     if timeToAttack == 0 then return "The hounds will attack today!"
@@ -636,10 +637,9 @@ local function HoundAttack(inst)
     end, GLOBAL.TheWorld)
 
 end
--- HOUND ATTACK ANNOUNCEMENT END
+-- hound attack announcement end
 
--- WORM ATTACK ANNOUNCEMENT
--- 洞穴蠕虫攻击提示
+-- worm attack announcement
 local function WormAttackString(timeToAttack)
 
     if timeToAttack == 0 then return "The worms will attack today!"
@@ -675,9 +675,9 @@ local function WormAttack(inst)
     end, GLOBAL.TheWorld)
 
 end
--- WORM ATTACK ANNOUNCEMENT END
+-- worm attack announcement end
 
--- 添加猎狗&蠕虫攻击触发器
-if HOUNDANNOUNCER then AddPrefabPostInit("world", HoundAttack) end
-if WORMANNOUNCER then AddPrefabPostInit("cave", WormAttack) end
--- 添加猎狗&蠕虫攻击触发器 END
+-- add hound / worm attack trigger
+if hound_anc_flag then AddPrefabPostInit("world", HoundAttack) end
+if worm_anc_flag then AddPrefabPostInit("cave", WormAttack) end
+-- add hound / worm attack trigger end

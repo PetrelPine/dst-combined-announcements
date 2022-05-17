@@ -12,7 +12,7 @@ Steam: [Combined Announcements (综合公告)](https://steamcommunity.com/shared
 
 + Follower Under Attack Announcement (随从被攻击提示)
 
-+ Mob Announcement (Appear/Disappear/Death) (怪物提示 (出现/消失/死亡))
++ Mob Appear/Disappear/Death Announcement (怪物出现/消失/死亡提示)
 
 + Hounds Attack Announcement (猎狗攻击提示)
 

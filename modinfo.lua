@@ -2,10 +2,16 @@
 -- Mod Reference: [https://steamcommunity.com/sharedfiles/filedetails/?id=1894295075]
 -- Mod Reference: [https://steamcommunity.com/sharedfiles/filedetails/?id=1887331613]
 -- Mod Reference: [https://steamcommunity.com/sharedfiles/filedetails/?id=2337978350]
+--[[
+-- Mod Name: Combined Announcements
+-- Author: PetrelPine
+-- Github Link: https://github.com/PetrelPine/dst-combined-announcements
+-- Steam Link: https://steamcommunity.com/sharedfiles/filedetails/?id=2691240099
+]]
 
 name = "Combined Announcements"
-version = "1.4"
-description = "None"
+version = "1.5"
+description = "A mod that "
 author = "PetrelPine"
 
 icon_atlas = "modicon.xml"
@@ -19,118 +25,118 @@ all_clients_require_mod = false
 ---[[
 configuration_options = {
 
-	{
-		name = "HOUNDANNOUNCER",
-		label = "Hound Attack",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should hound attacks be announced in the server?",
-	},
+    {
+        name = "hound_announcer",
+        label = "Hound Attack",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should hound attacks be announced in the server?",
+    },
 
-	{
-		name = "WORMANNOUNCER",
-		label = "Worm Attack",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should worm attacks be announced in the server?",
-	},
+    {
+        name = "worm_announcer",
+        label = "Worm Attack",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should worm attacks be announced in the server?",
+    },
 
-	{
-		name = "FABRICATIONANNOUNCER",
-		label = "Make Important",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should fabrications be announced in the server?",
-	},
+    {
+        name = "fabrication_announcer",
+        label = "Make Important",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should fabrications be announced in the server?",
+    },
 
-	{
-		name = "ATTACKANNOUNCER",
-		label = "Attack Followers",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should the attack of followers be announced?",
-	},
+    {
+        name = "attack_announcer",
+        label = "Attack Important",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should attacks on the important be announced?",
+    },
 
-	{
-		name = "COOLDOWNTIME",
-		label = "Cooldown Duration",
-		options = {
-						{description = "None (Spammy)", data = 0},
-						{description = "3 seconds", data = 3},
-						{description = "5 seconds", data = 5},
-						{description = "8 seconds", data = 8},
-						{description = "15 seconds", data = 15},
-					},
-		default = 5,
-		hover = "EXPERIMENTAL: How long should we wait to allow another announcement? (Not for deaths)",	
-	},
+    {
+        name = "cooldown_time",
+        label = "Cooldown Duration",
+        options = {
+            {description = "None (Spammy)", data = 0},
+            {description = "3 seconds", data = 3},
+            {description = "5 seconds", data = 5},
+            {description = "8 seconds", data = 8},
+            {description = "15 seconds", data = 15},
+        },
+        default = 5,
+        hover = "(Not Working) How long should we wait to allow another announcement? (only for make important and attack important)",    
+    },
 
-	{
-		name = "HAMMERINGANNOUNCER",
-		label = "Hammering Important",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should hammering be announced in the server?",
-	},
+    {
+        name = "hammering_announcer",
+        label = "Hammering Important",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should hammering be announced in the server?",
+    },
 
-	{
-		name = "LIGHTINGANNOUNCER",
-		label = "Lighting Important",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should lighting be announced in the server?",
-	},
-	
-	{
-		name = "APPEARANNOUNCER",
-		label = "Important Appearance",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should the appearance of Important Mobs be announced?",  --  This overrides cooldowns.
-	},
+    {
+        name = "lighting_announcer",
+        label = "Lighting Important",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should lighting be announced in the server?",
+    },
+    
+    {
+        name = "appear_announcer",
+        label = "Important Appearance",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should the appearance of important mobs be announced?",
+    },
 
-	{
-		name = "DISAPPEARANNOUNCER",
-		label = "Important Disappearance",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should the disappearance of Important Mobs be announced?",  --  This overrides cooldowns.
-	},
+    {
+        name = "disappear_announcer",
+        label = "Important Disappearance",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should the disappearance of important mobs be announced?",
+    },
 
-	{
-		name = "DEATHANNOUNCER",
-		label = "Important Death",
-		options = {
-						{description = "Announce", data = true},
-						{description = "Silent", data = false},
-					},
-		default = true,
-		hover = "Should the death of Important Mobs be announced?",  --  This overrides cooldowns.
-	},
+    {
+        name = "death_announcer",
+        label = "Important Death",
+        options = {
+            {description = "Announce", data = true},
+            {description = "Silent", data = false},
+        },
+        default = true,
+        hover = "Should the death of important mobs be announced?",
+    },
 
 }
 --]]
