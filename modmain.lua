@@ -131,10 +131,13 @@ local PREFABS_CHECK = {
 
 -- waiting time between two messages (whether it is in cooldown status)
 cooldown_status = false
-
+-- function to restore the cooldown status to false
 function cooldown_end() cooldown_status = false end
 
 -- validate and announce fabrication
+-- 不需要显示建造提示的物品名称
+local build_not_display = {}
+
 local function OnBuild_becomevalid(inst, prod)
 
     if PREFABS_CHECK[prod.prefab] then
@@ -144,9 +147,13 @@ local function OnBuild_becomevalid(inst, prod)
         if cooldown_status == false then
 
             if fab_anc_flag then
-                GLOBAL.TheNet:Announce("A " .. prod:GetDisplayName() .. " has been made by " .. inst:GetDisplayName())
+                -- 特定的物品不显示提示
+                if not table.contains(build_not_display, prod:GetDisplayName()) then
+                    GLOBAL.TheNet:Announce("A " .. prod:GetDisplayName() .. " has been made by " .. inst:GetDisplayName())
+                end
             end
 
+            -- 在日志中输出
             print("A " .. prod:GetDisplayName() .. " has been made by " .. inst:GetDisplayName())
 
             if GLOBAL.TheNet:GetIsServer() then
@@ -184,14 +191,23 @@ end)
 -- hammering announcement
 local _ACTION_HAMMER = GLOBAL.ACTIONS.HAMMER.fn
 
+  -- 不需要显示敲除提示的物品名称
+local hammer_not_display = {
+
+}
+
 GLOBAL.ACTIONS.HAMMER.fn = function(act)
 
     if act.doer and act.target and act.target.components.workable.workleft == 1 then
 
         if hammer_anc_flag then
-            GLOBAL.TheNet:Announce(act.doer.name .. " has hammered the " .. act.target.name)
+            -- 特定的物品不显示提示
+            if not table.contains(hammer_not_display, act.target.name) then
+                GLOBAL.TheNet:Announce(act.doer.name .. " has hammered the " .. act.target.name)
+            end
         end
 
+        -- 在日志中输出
         if act.doer.userid then
             print(act.doer.name .. " (" .. act.doer.userid .. ")" .. " has hammered the " .. act.target.name)
         end
